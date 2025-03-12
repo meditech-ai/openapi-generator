@@ -36,13 +36,14 @@ class {{{classname}}} {
 
 {{/vars}}
   @override
-  bool operator ==(Object other) => identical(this, other) || other is {{{classname}}} &&
+  bool operator ==(Object other) => identical(this, other)
+  || other is {{{classname}}} &&
   {{#vars}}
     {{#isMap}}_deepEquality.equals(other.{{{name}}}, {{{name}}}){{/isMap}}{{^isMap}}{{#isArray}}_deepEquality.equals(other.{{{name}}}, {{{name}}}){{/isArray}}{{^isArray}}other.{{{name}}} == {{{name}}}{{/isArray}}{{/isMap}}{{^-last}} &&{{/-last}}{{#-last}};{{/-last}}
   {{/vars}}
 
   @override
-  int get hashCode =>
+  int get hashCode => 
     // ignore: unnecessary_parenthesis
   {{#vars}}
     ({{#isNullable}}{{{name}}} == null ? 0 : {{/isNullable}}{{^isNullable}}{{^required}}{{^defaultValue}}{{{name}}} == null ? 0 : {{/defaultValue}}{{/required}}{{/isNullable}}{{{name}}}{{#isNullable}}!{{/isNullable}}{{^isNullable}}{{^required}}{{^defaultValue}}!{{/defaultValue}}{{/required}}{{/isNullable}}.hashCode){{^-last}} +{{/-last}}{{#-last}};{{/-last}}
@@ -120,7 +121,6 @@ class {{{classname}}} {
       assert(() {
         requiredKeys.forEach((key) {
           assert(json.containsKey(key), 'Required key "{{{classname}}}[$key]" is missing from JSON.');
-          assert(json[key] != null, 'Required key "{{{classname}}}[$key]" has a null value in JSON.');
         });
         return true;
       }());
@@ -220,7 +220,7 @@ class {{{classname}}} {
         {{{name}}}: mapValueOfType<{{{datatypeWithEnum}}}>(json, r'{{{baseName}}}'){{#required}}{{^isNullable}}!{{/isNullable}}{{/required}}{{^required}}{{#defaultValue}} ?? {{{.}}}{{/defaultValue}}{{/required}},
                 {{/isEnum}}
                 {{#isEnum}}
-        {{{name}}}: {{{enumName}}}.fromJson(json[r'{{{baseName}}}']){{#required}}{{^isNullable}}!{{/isNullable}}{{/required}}{{^required}}{{#defaultValue}} ?? {{{.}}}{{/defaultValue}}{{/required}},
+        {{{name}}}: {{{enumName}}}.fromJson(json[r'{{{baseName}}}']){{#required}}{{^isNullable}}!{{/isNullable}}{{/required}}{{^required}}{{#defaultValue}} ?? {{enumName}}._({{{.}}}){{/defaultValue}}{{/required}},
                 {{/isEnum}}
               {{/isNumber}}
             {{/isMap}}
